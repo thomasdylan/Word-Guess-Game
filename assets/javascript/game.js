@@ -1,3 +1,7 @@
+var win = 0;
+var loss = 0;
+var miss = 9;
+var guess = [];
 //List of words for game
 const wordJar = ["AWKWARD", "BAGPIPES", "BANJO", "BUNGLER", "CROQUET", "CRYPT", "DWARVES", "FERVID", "FISHHOOK",
 "FJORD", "GAZEBO", "GYPSY", "HAIKU", "HAPHAZARD", "HYPHEN", "IVORY", "JAZZY", "JIFFY", "JINX", "JUKEBOX", "KAYAK",
@@ -13,6 +17,8 @@ document.getElementById("underscore-word").textContent = hiddenWord;
 //Get key user presses
 document.onkeyup = function(event) {
     var userInput = event.key;
+    guess.push(userInput);
+    console.log(guess);
     return userInput;
 }
 //Reload page on button click after confirm
