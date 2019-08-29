@@ -36,30 +36,30 @@ document.getElementById("underscore-word").textContent = answerWord.slice("").jo
 //Get key user presses
 document.onkeyup = function (event) {
     var userInput = event.key;
+    console.log(userInput);
 
-    //WRONG
-    if (guessed.includes(userInput)) {
+    if (guessed.includes(userInput.toUpperCase())) {
         alert("Duplicate guess");
     } else {
         guessed.push(userInput.toUpperCase());
         console.log("guessed: " + guessed);
     }
 
-    //WRONG
-    if (answerWord.includes(userInput)) {
+    for (var i = 0; i < gameWord.length; i++) {
+        if (userInput.toUpperCase() === gameWord[i]) {
+            answerWord[i] = userInput.toUpperCase();
+            remainingLetters--;
+            document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
+        }
+    };
+
+    if (answerWord.includes(userInput.toUpperCase())) {
         console.log("Nothing should happen");
     } else {
         wrongGuesses++;
         console.log("wrong guesses: " + wrongGuesses);
     }
 
-    for (var i = 0; i < gameWord.length; i++) {
-        if (userInput.toUpperCase() === gameWord[i]) {
-            answerWord[i] = userInput;
-            remainingLetters--;
-            document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
-        }
-    };
     if (wrongGuesses >= maxWrongGuesses) {
         gameOver = true;
     };
