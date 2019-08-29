@@ -1,7 +1,3 @@
-var win = 0;
-var loss = 0;
-var miss = 9;
-var guess = [];
 //List of words for game
 const wordJar = ["AWKWARD", "BAGPIPES", "BANJO", "BUNGLER", "CROQUET", "CRYPT", "DWARVES", "FERVID", "FISHHOOK",
     "FJORD", "GAZEBO", "GYPSY", "HAIKU", "HAPHAZARD", "HYPHEN", "IVORY", "JAZZY", "JIFFY", "JINX", "JUKEBOX", "KAYAK",
@@ -20,9 +16,11 @@ var wrongGuesses = 0;
 var guessed = [];
 var answerWord = [];
 var remainingLetters;
+var gameWord;
+
 
 //Grabs a random word from wordJar
-var gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
+gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
 
 //Loops through the gameWord and creates an array of underscores
 for (var i = 0; i < gameWord.length; i++) {
@@ -33,14 +31,40 @@ for (var i = 0; i < gameWord.length; i++) {
 remainingLetters = answerWord.length;
 
 //console.log(remainingLetters);
-document.getElementById("underscore-word").textContent = answerWord;
+document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
 
 //Get key user presses
 document.onkeyup = function (event) {
     var userInput = event.key;
-    guess.push(userInput);
-    console.log(guess);
-    return userInput;
+
+    //WRONG
+    if (guessed.includes(userInput)) {
+        alert("Duplicate guess");
+    } else {
+        guessed.push(userInput.toUpperCase());
+        console.log("guessed: " + guessed);
+    }
+
+    //WRONG
+    if (answerWord.includes(userInput)) {
+        console.log("Nothing should happen");
+    } else {
+        wrongGuesses++;
+        console.log("wrong guesses: " + wrongGuesses);
+    }
+
+    for (var i = 0; i < gameWord.length; i++) {
+        if (userInput.toUpperCase() === gameWord[i]) {
+            answerWord[i] = userInput;
+            remainingLetters--;
+            document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
+        }
+    };
+    if (wrongGuesses >= maxWrongGuesses) {
+        gameOver = true;
+    };
+    console.log(gameOver);
+    document.getElementById("guessed-letters").textContent = guessed.slice("").join(" ");
 }
 
 function resetGame() {
@@ -53,6 +77,10 @@ function refreshPage() {
         window.location.reload();
     }
 };
+
+console.log(gameWord);
+console.log(wrongGuesses);
+
 
 /*
 Choose a theme for your game! In the demo, we picked an 80s theme: 80s questions, 80s sound and an 80s aesthetic. You can choose any subject for your theme, though, so be creative!
@@ -72,3 +100,5 @@ Number of Guesses Remaining: (# of guesses remaining for the user).
 Letters Already Guessed: (Letters the user has guessed, displayed like L Z Y H).
 After the user wins/loses the game should automatically choose another word and make the user play it.
 */
+
+//2 functions.  One to start game and one after game is ended.  Calls function multiple times
