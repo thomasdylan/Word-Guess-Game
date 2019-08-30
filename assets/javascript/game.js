@@ -11,76 +11,85 @@ var wins = 0;
 var losses = 0;
 var gameStart = false;
 var gameOver = false;
-var maxWrongGuesses = 8;
-var wrongGuesses = 0;
+var wrongGuesses = 8;
 var guessed = [];
 var answerWord = [];
 var remainingLetters;
 var gameWord;
 
+function game() {
+    //Grabs a random word from wordJar
+    gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
 
-//Grabs a random word from wordJar
-gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
-
-//Loops through the gameWord and creates an array of underscores
-for (var i = 0; i < gameWord.length; i++) {
-    answerWord[i] = "_";
-}
-
-//Sets the remaining letters to the length of the random word
-remainingLetters = answerWord.length;
-
-//console.log(remainingLetters);
-document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
-
-//Get key user presses
-document.onkeyup = function (event) {
-    var userInput = event.key;
-    console.log(userInput);
-
-    if (guessed.includes(userInput.toUpperCase())) {
-        console.log("Duplicate guess");
-    } else {
-        guessed.push(userInput.toUpperCase());
-        console.log("guessed: " + guessed);
+    //Loops through the gameWord and creates an array of underscores
+    for (var i = 0; i < gameWord.length; i++) {
+        answerWord[i] = "_";
     }
 
-    for (var i = 0; i < gameWord.length; i++) {
-        if (userInput.toUpperCase() === gameWord[i]) {
-            answerWord[i] = userInput.toUpperCase();
-            remainingLetters--;
-            document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
+    //Sets the remaining letters to the length of the random word
+    remainingLetters = answerWord.length;
+
+    
+    document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
+    document.getElementById("remaining-guesses").textContent = ("Guesses Remaining: " + wrongGuesses);
+
+    //Get key user presses
+    document.onkeyup = function (event) {
+        var userInput = event.key;
+        console.log(userInput);
+
+        //Checks to see if guess has already been made.  If not it adds it to the guessed array.
+        if (guessed.includes(userInput.toUpperCase())) {
+            console.log("Duplicate guess");
+        } else {
+            guessed.push(userInput.toUpperCase());
+            console.log("guessed: " + guessed);
+        }
+
+        //If input is part of the work it adds it to the screen and decresses the amount of letters left.
+        for (var i = 0; i < gameWord.length; i++) {
+            if (userInput.toUpperCase() === gameWord[i]) {
+                answerWord[i] = userInput.toUpperCase();
+                remainingLetters--;
+                document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
+            }
+        };
+
+        //If the guess is part of the word it does nothing.  If it isn't then it adds one to the wrongGuesses
+        if (answerWord.includes(userInput.toUpperCase())) {
+            console.log("Nothing should happen");
+        } else {
+            wrongGuesses--;
+            document.getElementById("remaining-guesses").textContent = ("Guesses Remaining: " + wrongGuesses);
+            console.log("wrong guesses: " + wrongGuesses);
+        }
+        
+        //Checks to see if wrongGuesses has reached the max.  If so it changes the variable gameOver to true.
+        if (wrongGuesses <= 0) {
+            gameOver = true;
+        };
+        console.log(gameOver);
+        document.getElementById("guessed-letters").textContent = guessed.slice("").join(" ");
+    }
+
+    //Unnecessary function.  Will be moved to an if statement that breaks the game
+    function resetGame() {
+        wrongGuesses = 8;
+        gameStart = false;
+    };
+
+    //If restart button is clicked it refreshes the page.  Has to be outside game function.
+    function refreshPage() {
+        if (confirm("Are you sure? This will reset your score.")) {
+            window.location.reload();
         }
     };
 
-    if (answerWord.includes(userInput.toUpperCase())) {
-        console.log("Nothing should happen");
-    } else {
-        wrongGuesses++;
-        console.log("wrong guesses: " + wrongGuesses);
-    }
-
-    if (wrongGuesses >= maxWrongGuesses) {
-        gameOver = true;
-    };
-    console.log(gameOver);
-    document.getElementById("guessed-letters").textContent = guessed.slice("").join(" ");
+    console.log(gameWord);
+    console.log(wrongGuesses);
 }
 
-function resetGame() {
-    wrongGuesses = 0;
-    gameStart = false;
-};
-
-function refreshPage() {
-    if (confirm("Are you sure? This will reset your score.")) {
-        window.location.reload();
-    }
-};
-
-console.log(gameWord);
-console.log(wrongGuesses);
-
+game();
 
 /*
 Choose a theme for your game! In the demo, we picked an 80s theme: 80s questions, 80s sound and an 80s aesthetic. You can choose any subject for your theme, though, so be creative!
