@@ -22,10 +22,28 @@ document.getElementById("losses").textContent = ("Losses: " + losses);
 document.getElementById("wins").textContent = ("Wins: " + wins);
 document.getElementById("underscore-word").textContent = ("Press any key to get started!");
 
-//Starts game function on key up
 
+// Restart the game on completion
+function resetGame() {
 
+    //Resets variables
+    wrongGuesses = 8;
+    gameStart = false;
 
+    //Picks a random word from our list
+    gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
+
+    //Clears the arrays
+    guessed = [];
+    answerWord = [];
+
+    //Loops through the gameWord and creates an array of underscores
+    for (var i = 0; i < gameWord.length; i++) {
+        answerWord[i] = "_";
+    }
+}
+
+//Starts game function 
 function game() {
     //Grabs a random word from wordJar
     gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
@@ -41,7 +59,7 @@ function game() {
     //Show elements we want during game
     document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
     document.getElementById("remaining-guesses").textContent = ("Guesses Remaining: " + wrongGuesses);
-    
+
 
     //Get key user presses
     document.onkeyup = function (event) {
@@ -60,12 +78,12 @@ function game() {
         for (var i = 0; i < gameWord.length; i++) {
             if (userInput.toUpperCase() === gameWord[i]) {
                 answerWord[i] = userInput.toUpperCase();
-                if(answerWord.includes(userInput.toUpperCase())) {
+                if (answerWord.includes(userInput.toUpperCase())) {
                     console.log("only once");
                 } else {
                     remainingLetters--;
                 }
-                
+
                 document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
             }
         };
@@ -78,9 +96,9 @@ function game() {
             document.getElementById("remaining-guesses").textContent = ("Guesses Remaining: " + wrongGuesses);
             console.log("wrong guesses: " + wrongGuesses);
         }
-        
+
         //Checks to see if remainingLetters has reached 0.  If so it changes the variable gameOver to true and adds one to wins.
-        if(remainingLetters = 0) {
+        if (remainingLetters = 0) {
             gameOver = true;
             wins++;
             document.getElementById("wins").textContent = ("Wins: " + wins);
@@ -97,9 +115,9 @@ function game() {
         document.getElementById("guessed-letters").textContent = guessed.slice("").join(" ");
     }
 
-    
 
-    
+
+
 
     console.log(gameWord);
     console.log(wrongGuesses);
