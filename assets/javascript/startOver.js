@@ -25,6 +25,7 @@ document.getElementById("losses").textContent = ("Losses: " + losses);
 document.getElementById("wins").textContent = ("Wins: " + wins);
 document.getElementById("underscore-word").textContent = ("Press any key to get started!");
 
+//Function creates a new word to play.
 function newWord() {
     //Picks a random word from our list
     gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
@@ -34,37 +35,82 @@ function newWord() {
         answerWord[i] = "_";
     }
 
-    //
-    document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
-    //Dev tools cheatcodes.
-    console.log(gameWord);
+    //Displays the word as underscores. innerHTML should prevent a shorter word from not displaying properly.
+    document.getElementById("underscore-word").innerHTML = answerWord.slice("").join(" ");
+    console.log("gameWord: ", gameWord); //Dev tools cheatcodes.
+
+    remainingLetters = answerWord.length; //Sets the variable remaining letter to the length of our word.
+    console.log("Remaining Letters: ", remainingLetters);
 }
 
-//When the window is loaded and a key is pressed this function calls newWord and set gameStart to true.
+//Function to hold the logic for guessing letters and determining if they are correct or wrong.
+function guessing() {
+    //all logic will have to be within next block for userInput scope.  Unable to retrieve it to guessing function otherwise.
+    document.onkeyup = function (event) {
+        var userInput = (event.key).toUpperCase(); //Takes the key the user pressed and assigns it to userInput as an Uppercase letter.  ALL CAPS.
+        console.log("userInput: ", userInput);
+
+        //Adds the userInput to the guessed array if the guess doesn't already exist in the array.
+        if (guessed.includes(userInput.toUpperCase()) === false) {
+            guessed.push(userInput.toUpperCase()); // adds to array
+            document.getElementById("guessed-letters").innerHTML = guessed.slice("").join(" "); // adds array to HTML
+            console.log("guessed: " + guessed);
+        }
+
+        //Checks if guess is part of word.  If so it adds it to the array and HTML
+        for (var i = 0; i < gameWord.length; i++) { // Loops through the word for each letter
+            if (userInput.toUpperCase() === gameWord[i]) {  //Checks guess to index of i of gameWord
+                answerWord[i] = userInput.toUpperCase(); // Changes the underscore to the user input letter.
+                remainingLetters--; // Decreases remainingLetters by one.
+            }
+        };
+
+        console.log("Updated remaining letters: ", remainingLetters);
+        document.getElementById("underscore-word").textContent = answerWord.slice("").join(" "); //adds updated word to screen.
+
+    }
+}
+
+//When the window is loaded and a key is pressed this function calls newWord, guessing and set gameStart to true.
 //Wrapping this block inside an if function without the inner if doesn't work. Must be black magic.
 document.onkeyup = function () {
     if (!gameStart) {
         gameStart = true;
         newWord();
-        console.log(gameStart);
+        guessing();
+        console.log("gameStart: ", gameStart);
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 Choose a theme for your game! In the demo, we picked an 80s theme: 80s questions, 80s sound and an 80s aesthetic. You can choose any subject for your theme, though, so be creative!
-Use key events to listen for the letters that your players will type.
+X-Use key events to listen for the letters that your players will type.
 Display the following on the page:
-Press any key to get started!
+X-Press any key to get started!
 Wins: (# of times user guessed the word correctly).
 
 
 
-If the word is madonna, display it like this when the game starts: _ _ _ _ _ _ _.
-As the user guesses the correct letters, reveal them: m a d o _  _ a.
+X-If the word is madonna, display it like this when the game starts: _ _ _ _ _ _ _.
+X-As the user guesses the correct letters, reveal them: m a d o _  _ a.
 
 
 
 Number of Guesses Remaining: (# of guesses remaining for the user).
-Letters Already Guessed: (Letters the user has guessed, displayed like L Z Y H).
+X-Letters Already Guessed: (Letters the user has guessed, displayed like L Z Y H).
 After the user wins/loses the game should automatically choose another word and make the user play it.
 */
