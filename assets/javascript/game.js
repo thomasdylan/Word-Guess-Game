@@ -18,6 +18,7 @@ var answerWord = [];
 var remainingLetters;
 var gameWord;
 var previousWord
+var audio = new Audio('assets/audio/drumFill.wav'); //I made this
 
 //Picks a random word from our list
 gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
@@ -109,6 +110,7 @@ function guessing() {
 
         //Win condition
         if (remainingLetters <= 0) {
+            audio.play();
             wins++;
             previousWord = gameWord;
             document.getElementById("wins").innerHTML = ("Wins: " + wins);
