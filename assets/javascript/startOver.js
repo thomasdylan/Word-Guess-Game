@@ -100,6 +100,7 @@ function guessing() {
         if (remainingLetters <= 0) {
             wins++;
             document.getElementById("wins").innerHTML = ("Wins: " + wins);
+            document.getElementById("previous-word").innerHTML = ("Previous word: " + gameWord);
             reset();
             newWord();
             guessing();
@@ -109,6 +110,7 @@ function guessing() {
         if (wrongGuesses <= 0) {
             losses++;
             document.getElementById("losses").innerHTML = ("Losses: " + losses);
+            document.getElementById("previous-word").innerHTML = ("Previous word: " + gameWord);
             reset();
             newWord();
             guessing();
