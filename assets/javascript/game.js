@@ -10,145 +10,153 @@ const wordJar = ["AWKWARD", "BAGPIPES", "BANJO", "BUNGLER", "CROQUET", "CRYPT", 
 var wins = 0;
 var losses = 0;
 var gameStart = false;
-var gameOver = false;
 var wrongGuesses = 8;
+var wrongArray = [];
 var guessed = [];
 var answerWord = [];
 var remainingLetters;
 var gameWord;
+
+//Picks a random word from our list
+gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
 
 //Shows elements we want to display even when Game function is not running
 document.getElementById("losses").textContent = ("Losses: " + losses);
 document.getElementById("wins").textContent = ("Wins: " + wins);
 document.getElementById("underscore-word").textContent = ("Press any key to get started!");
 
-
-// Restart the game on completion
-function resetGame() {
-
-    //Resets variables
+//Function resets all variables on new game.
+function reset() {
+    //Reset Variables
     wrongGuesses = 8;
-    gameStart = false;
+    wrongArray = [];
+    guessed = [];
+    answerWord = [];
+    remainingLetters;
+    gameWord;
+    //Reset Guessed Array in HTML.
+    document.getElementById("guessed-letters").innerHTML = guessed.slice("").join(" ");
+}
 
+//Function creates a new word to play.
+function newWord() {
     //Picks a random word from our list
     gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
 
-    //Clears the arrays
-    guessed = [];
-    answerWord = [];
-
     //Loops through the gameWord and creates an array of underscores
     for (var i = 0; i < gameWord.length; i++) {
         answerWord[i] = "_";
     }
+
+    //Displays the word as underscores. innerHTML should prevent a shorter word from not displaying properly on new game.
+    document.getElementById("underscore-word").innerHTML = answerWord.slice("").join(" ");
+    console.log("gameWord: ", gameWord); //Dev tools cheatcodes.
+
+    //Displays the ammount of guesses remaining.
+    document.getElementById("remaining-guesses").innerHTML = ("Guesses Remaining: " + wrongGuesses);
+
+    remainingLetters = answerWord.length; //Sets the variable remaining letter to the length of our word.
+    console.log("Remaining Letters: ", remainingLetters);
 }
 
-//Starts game function 
-function game() {
-    //Grabs a random word from wordJar
-    gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
-
-    //Loops through the gameWord and creates an array of underscores
-    for (var i = 0; i < gameWord.length; i++) {
-        answerWord[i] = "_";
-    }
-
-    //Sets the remaining letters to the length of the random word
-    remainingLetters = answerWord.length;
-
-    //Show elements we want during game
-    document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
-    document.getElementById("remaining-guesses").textContent = ("Guesses Remaining: " + wrongGuesses);
-
-
-    //Get key user presses
+//Function to hold the logic for guessing letters and determining if they are correct or wrong.
+function guessing() {
+    //all logic will have to be within next block for userInput scope.  Unable to retrieve it to guessing function otherwise.
     document.onkeyup = function (event) {
-        var userInput = event.key;
-        console.log(userInput);
+        var userInput = (event.key).toUpperCase(); //Takes the key the user pressed and assigns it to userInput as an Uppercase letter.  ALL CAPS.
+        console.log("userInput: ", userInput);
 
-        //Checks to see if guess has already been made.  If not it adds it to the guessed array.
-        if (guessed.includes(userInput.toUpperCase())) {
-            console.log("Duplicate guess");
-        } else {
-            guessed.push(userInput.toUpperCase());
+        //Adds the userInput to the guessed array if the guess doesn't already exist in the array.
+        if (guessed.includes(userInput.toUpperCase()) === false) {
+            guessed.push(userInput.toUpperCase()); // adds to array
+            document.getElementById("guessed-letters").innerHTML = guessed.slice("").join(" "); // adds array to HTML
             console.log("guessed: " + guessed);
         }
 
-        //If input is part of the work it adds it to the screen and decresses the amount of letters left.
-        for (var i = 0; i < gameWord.length; i++) {
-            if (userInput.toUpperCase() === gameWord[i]) {
-                answerWord[i] = userInput.toUpperCase();
-                if (answerWord.includes(userInput.toUpperCase())) {
-                    console.log("only once");
-                } else {
-                    remainingLetters--;
-                }
-
-                document.getElementById("underscore-word").textContent = answerWord.slice("").join(" ");
+        //Checks if guess is part of word.  If so it adds it to the array and HTML
+        for (var i = 0; i < gameWord.length; i++) { // Loops through the word for each letter
+            if (userInput.toUpperCase() === gameWord[i]) { //Checks guess to index of i of gameWord
+                answerWord[i] = userInput.toUpperCase(); // Changes the underscore to the user input letter.
+                remainingLetters--; // Decreases remainingLetters by one.
             }
         };
 
-        //If the guess is part of the word it does nothing.  If it isn't then it adds one to the wrongGuesses
-        if (answerWord.includes(userInput.toUpperCase())) {
-            console.log("Nothing should happen");
-        } else {
-            wrongGuesses--;
-            document.getElementById("remaining-guesses").textContent = ("Guesses Remaining: " + wrongGuesses);
-            console.log("wrong guesses: " + wrongGuesses);
+        //Checks if guess is not part of word.  If so it decreases the amount of guesses left.
+        if (guessed.includes(userInput.toUpperCase()) && gameWord.includes(userInput.toUpperCase()) === false) {
+            if (wrongArray.includes(userInput.toUpperCase()) === false) {
+                wrongArray.push(userInput.toUpperCase());
+                wrongGuesses--;
+                console.log("wrongGuesses: " + wrongGuesses);
+            }
         }
 
-        //Checks to see if remainingLetters has reached 0.  If so it changes the variable gameOver to true and adds one to wins.
-        if (remainingLetters = 0) {
-            gameOver = true;
+        console.log("Updated remaining letters: ", remainingLetters);
+        document.getElementById("underscore-word").textContent = answerWord.slice("").join(" "); //adds updated word to screen.
+        document.getElementById("remaining-guesses").innerHTML = ("Guesses Remaining: " + wrongGuesses); //adds updated guesses remaining to screen.
+
+        //Win condition
+        if (remainingLetters <= 0) {
             wins++;
-            document.getElementById("wins").textContent = ("Wins: " + wins);
-        };
+            document.getElementById("wins").innerHTML = ("Wins: " + wins);
+            document.getElementById("previous-word").innerHTML = ("Previous word: " + gameWord);
+            reset();
+            newWord();
+            guessing();
+        }
 
-        //Checks to see if wrongGuesses has reached 0.  If so it changes the variable gameOver to true and adds one to losses.
-        if (wrongGuesses = 0) {
-            gameOver = true;
+        //Loss Condition
+        if (wrongGuesses <= 0) {
             losses++;
-            document.getElementById("losses").textContent = ("Losses: " + losses);
-        };
+            document.getElementById("losses").innerHTML = ("Losses: " + losses);
+            document.getElementById("previous-word").innerHTML = ("Previous word: " + gameWord);
+            reset();
+            newWord();
+            guessing();
+        }
 
-        console.log(gameOver);
-        document.getElementById("guessed-letters").textContent = guessed.slice("").join(" ");
     }
-
-
-
-
-
-    console.log(gameWord);
-    console.log(wrongGuesses);
 }
 
-//If restart button is clicked it refreshes the page.  Has to be outside game function.
-function refreshPage() {
-    if (confirm("Are you sure? This will reset your score.")) {
-        window.location.reload();
+//When the window is loaded and a key is pressed this function calls newWord, guessing and set gameStart to true.
+//Wrapping this block inside an if function without the inner if doesn't work. Must be black magic.
+document.onkeyup = function () {
+    if (!gameStart) {
+        gameStart = true;
+        newWord();
+        guessing();
+        console.log("gameStart: ", gameStart);
     }
-};
+}
 
-game();
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 /*
 Choose a theme for your game! In the demo, we picked an 80s theme: 80s questions, 80s sound and an 80s aesthetic. You can choose any subject for your theme, though, so be creative!
-X Use key events to listen for the letters that your players will type.
+X-Use key events to listen for the letters that your players will type.
 Display the following on the page:
-Press any key to get started!
-X Wins: (# of times user guessed the word correctly).
+X-Press any key to get started!
+X-Wins: (# of times user guessed the word correctly).
 
 
 
-X If the word is madonna, display it like this when the game starts: _ _ _ _ _ _ _.
-X As the user guesses the correct letters, reveal them: m a d o _  _ a.
+X-If the word is madonna, display it like this when the game starts: _ _ _ _ _ _ _.
+X-As the user guesses the correct letters, reveal them: m a d o _  _ a.
 
 
 
-X Number of Guesses Remaining: (# of guesses remaining for the user).
-X Letters Already Guessed: (Letters the user has guessed, displayed like L Z Y H).
-After the user wins/loses the game should automatically choose another word and make the user play it.
+Number of Guesses Remaining: (# of guesses remaining for the user).
+X-Letters Already Guessed: (Letters the user has guessed, displayed like L Z Y H).
+X-After the user wins/loses the game should automatically choose another word and make the user play it.
 */
