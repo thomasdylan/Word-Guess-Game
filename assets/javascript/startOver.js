@@ -10,7 +10,6 @@ const wordJar = ["AWKWARD", "BAGPIPES", "BANJO", "BUNGLER", "CROQUET", "CRYPT", 
 var wins = 0;
 var losses = 0;
 var gameStart = false;
-var gameOver = false;
 var wrongGuesses = 8;
 var wrongArray = [];
 var guessed = [];
@@ -29,7 +28,6 @@ document.getElementById("underscore-word").textContent = ("Press any key to get 
 //Function resets all variables on new game.
 function reset() {
     //Reset Variables
-    gameOver = false;
     wrongGuesses = 8;
     wrongArray = [];
     guessed = [];
