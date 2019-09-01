@@ -83,15 +83,15 @@ function guessing() {
             console.log("guessed: " + guessed);
         }
 
-        //Checks if guess is part of word.  If so it adds it to the array and HTML
-        for (var i = 0; i < gameWord.length; i++) { // Loops through the word for each letter
-            if (correctArray.includes(userInput.toUpperCase()) === false) { //Checks to see if this guess has already been made and if so stops it from decreasing remaining letters.
+        if (correctArray.includes(userInput.toUpperCase()) === false) { //Checks to see if this guess has already been made and if so stops it from decreasing remaining letters.
+            //Checks if guess is part of word.  If so it adds it to the array and HTML
+            for (var i = 0; i < gameWord.length; i++) { // Loops through the word for each letter.
                 if (userInput.toUpperCase() === gameWord[i]) { //Checks guess to index of i of gameWord
                     correctArray.push(userInput.toUpperCase()); //Adds guess to correctArray to prevent the same letter from decreasing remaining letters.
                     answerWord[i] = userInput.toUpperCase(); // Changes the underscore to the user input letter.
                     remainingLetters--; // Decreases remainingLetters by one.
-                }
-            }
+                };
+            };
         };
 
         //Checks if guess is not part of word.  If so it decreases the amount of guesses left.
