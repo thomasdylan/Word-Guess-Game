@@ -25,6 +25,19 @@ document.getElementById("losses").textContent = ("Losses: " + losses);
 document.getElementById("wins").textContent = ("Wins: " + wins);
 document.getElementById("underscore-word").textContent = ("Press any key to get started!");
 
+//Function resets all variables on new game.
+function reset() {
+    //Reset Variables
+    gameOver = false;
+    wrongGuesses = 8;
+    guessed = [];
+    answerWord = [];
+    remainingLetters;
+    gameWord;
+    //Reset Guessed Array in HTML.
+    document.getElementById("guessed-letters").innerHTML = guessed.slice("").join(" ");
+}
+
 //Function creates a new word to play.
 function newWord() {
     //Picks a random word from our list
@@ -35,7 +48,7 @@ function newWord() {
         answerWord[i] = "_";
     }
 
-    //Displays the word as underscores. innerHTML should prevent a shorter word from not displaying properly.
+    //Displays the word as underscores. innerHTML should prevent a shorter word from not displaying properly on new game.
     document.getElementById("underscore-word").innerHTML = answerWord.slice("").join(" ");
     console.log("gameWord: ", gameWord); //Dev tools cheatcodes.
 
@@ -59,7 +72,7 @@ function guessing() {
 
         //Checks if guess is part of word.  If so it adds it to the array and HTML
         for (var i = 0; i < gameWord.length; i++) { // Loops through the word for each letter
-            if (userInput.toUpperCase() === gameWord[i]) {  //Checks guess to index of i of gameWord
+            if (userInput.toUpperCase() === gameWord[i]) { //Checks guess to index of i of gameWord
                 answerWord[i] = userInput.toUpperCase(); // Changes the underscore to the user input letter.
                 remainingLetters--; // Decreases remainingLetters by one.
             }
@@ -67,6 +80,24 @@ function guessing() {
 
         console.log("Updated remaining letters: ", remainingLetters);
         document.getElementById("underscore-word").textContent = answerWord.slice("").join(" "); //adds updated word to screen.
+
+        //Win condition
+        if (remainingLetters <= 0) {
+            wins++;
+            document.getElementById("wins").innerHTML = ("Wins: " + wins);
+            reset();
+            newWord();
+            guessing();
+        }
+
+        //Loss Condition
+        if (wrongGuesses <= 0) {
+            losses--;
+            document.getElementById("losses").innerHTML = ("Losses: " + losses);
+            reset();
+            newWord();
+            guessing();
+        }
 
     }
 }
