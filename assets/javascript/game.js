@@ -12,10 +12,12 @@ var losses = 0;
 var gameStart = false;
 var wrongGuesses = 8;
 var wrongArray = [];
+var correctArray = [];
 var guessed = [];
 var answerWord = [];
 var remainingLetters;
 var gameWord;
+var previousWord
 
 //Picks a random word from our list
 gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
@@ -30,6 +32,7 @@ function reset() {
     //Reset Variables
     wrongGuesses = 8;
     wrongArray = [];
+    correctArray = [];
     guessed = [];
     answerWord = [];
     remainingLetters;
@@ -40,8 +43,15 @@ function reset() {
 
 //Function creates a new word to play.
 function newWord() {
+
     //Picks a random word from our list
     gameWord = wordJar[Math.floor(Math.random() * wordJar.length)];
+
+    //Should stop the same word from being chosen twice in a row.
+    if (gameWord === previousWord) {
+        newWord();
+    }
+
 
     //Loops through the gameWord and creates an array of underscores
     for (var i = 0; i < gameWord.length; i++) {
@@ -75,9 +85,12 @@ function guessing() {
 
         //Checks if guess is part of word.  If so it adds it to the array and HTML
         for (var i = 0; i < gameWord.length; i++) { // Loops through the word for each letter
-            if (userInput.toUpperCase() === gameWord[i]) { //Checks guess to index of i of gameWord
-                answerWord[i] = userInput.toUpperCase(); // Changes the underscore to the user input letter.
-                remainingLetters--; // Decreases remainingLetters by one.
+            if (correctArray.includes(userInput.toUpperCase()) === false) { //Checks to see if this guess has already been made and if so stops it from decreasing remaining letters.
+                if (userInput.toUpperCase() === gameWord[i]) { //Checks guess to index of i of gameWord
+                    correctArray.push(userInput.toUpperCase()); //Adds guess to correctArray to prevent the same letter from decreasing remaining letters.
+                    answerWord[i] = userInput.toUpperCase(); // Changes the underscore to the user input letter.
+                    remainingLetters--; // Decreases remainingLetters by one.
+                }
             }
         };
 
@@ -97,6 +110,7 @@ function guessing() {
         //Win condition
         if (remainingLetters <= 0) {
             wins++;
+            previousWord = gameWord;
             document.getElementById("wins").innerHTML = ("Wins: " + wins);
             document.getElementById("previous-word").innerHTML = ("Previous word: " + gameWord);
             reset();
@@ -107,6 +121,7 @@ function guessing() {
         //Loss Condition
         if (wrongGuesses <= 0) {
             losses++;
+            previousWord = gameWord;
             document.getElementById("losses").innerHTML = ("Losses: " + losses);
             document.getElementById("previous-word").innerHTML = ("Previous word: " + gameWord);
             reset();
