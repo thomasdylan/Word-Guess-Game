@@ -12,6 +12,7 @@ var losses = 0;
 var gameStart = false;
 var gameOver = false;
 var wrongGuesses = 8;
+var wrongArray = [];
 var guessed = [];
 var answerWord = [];
 var remainingLetters;
@@ -30,6 +31,7 @@ function reset() {
     //Reset Variables
     gameOver = false;
     wrongGuesses = 8;
+    wrongArray = [];
     guessed = [];
     answerWord = [];
     remainingLetters;
@@ -51,6 +53,9 @@ function newWord() {
     //Displays the word as underscores. innerHTML should prevent a shorter word from not displaying properly on new game.
     document.getElementById("underscore-word").innerHTML = answerWord.slice("").join(" ");
     console.log("gameWord: ", gameWord); //Dev tools cheatcodes.
+
+    //Displays the ammount of guesses remaining.
+    document.getElementById("remaining-guesses").innerHTML = ("Guesses Remaining: " + wrongGuesses);
 
     remainingLetters = answerWord.length; //Sets the variable remaining letter to the length of our word.
     console.log("Remaining Letters: ", remainingLetters);
@@ -78,8 +83,18 @@ function guessing() {
             }
         };
 
+        //Checks if guess is not part of word.  If so it decreases the amount of guesses left.
+        if (guessed.includes(userInput.toUpperCase()) && gameWord.includes(userInput.toUpperCase()) === false) {
+            if (wrongArray.includes(userInput.toUpperCase()) === false) {
+                wrongArray.push(userInput.toUpperCase());
+                wrongGuesses--;
+                console.log("wrongGuesses: " + wrongGuesses);
+            }
+        }
+
         console.log("Updated remaining letters: ", remainingLetters);
         document.getElementById("underscore-word").textContent = answerWord.slice("").join(" "); //adds updated word to screen.
+        document.getElementById("remaining-guesses").innerHTML = ("Guesses Remaining: " + wrongGuesses); //adds updated guesses remaining to screen.
 
         //Win condition
         if (remainingLetters <= 0) {
@@ -92,7 +107,7 @@ function guessing() {
 
         //Loss Condition
         if (wrongGuesses <= 0) {
-            losses--;
+            losses++;
             document.getElementById("losses").innerHTML = ("Losses: " + losses);
             reset();
             newWord();
@@ -132,7 +147,7 @@ Choose a theme for your game! In the demo, we picked an 80s theme: 80s questions
 X-Use key events to listen for the letters that your players will type.
 Display the following on the page:
 X-Press any key to get started!
-Wins: (# of times user guessed the word correctly).
+X-Wins: (# of times user guessed the word correctly).
 
 
 
@@ -143,5 +158,5 @@ X-As the user guesses the correct letters, reveal them: m a d o _  _ a.
 
 Number of Guesses Remaining: (# of guesses remaining for the user).
 X-Letters Already Guessed: (Letters the user has guessed, displayed like L Z Y H).
-After the user wins/loses the game should automatically choose another word and make the user play it.
+X-After the user wins/loses the game should automatically choose another word and make the user play it.
 */
