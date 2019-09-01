@@ -4,7 +4,7 @@ html, body {
 
 body {
     font-family: 'Metal Mania', cursive;
-    background: black;
+    background-image: url("../images/background.jpg");
 }
 
 .container {
